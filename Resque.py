@@ -5,7 +5,7 @@ import commands
 
 RESQUE_TOTAL_PROCESSED = "redis-cli --raw get resque:stat:processed"
 RESQUE_TOTAL_FAILED = "redis-cli --raw get resque:stat:failed"
-
+RESQUE_WORKER_COUNT = "redis-cli --raw smembers resque:workers | wc -l" 
 RESQUE_QUEUES = "redis-cli --raw smembers resque:queues"
 
 class Resque:
@@ -19,6 +19,7 @@ class Resque:
 		stats['total_processed'] = int(commands.getoutput(RESQUE_TOTAL_PROCESSED))
 		stats['total_failed'] = int(commands.getoutput(RESQUE_TOTAL_FAILED))
 		stats['total_pending'] = 0
+        stats['worker_count'] = int(commands.getoutput(RESQUE_WORKER_COUNT))
 		for queue in commands.getoutput(RESQUE_QUEUES).splitlines():
 			stats[queue] = int(commands.getoutput("redis-cli --raw llen resque:queue:"+queue))
 			stats['total_pending'] = stats['total_pending']+stats[queue]
